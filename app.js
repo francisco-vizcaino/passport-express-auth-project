@@ -11,6 +11,7 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 
+//Initialize Passport 
 const initializePassport = require('./config/passport-config.js')
 initializePassport(
     passport,
@@ -37,9 +38,9 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 //Sets view route for our index page
-app.get('/', (req, res) => {
+app.get('/', forwardAuthenticated, (req, res) => {
     res.render('index.ejs', { name: req.user.name })
-});
+})
 
 //Sets view route for our login page
 app.get('/login', (req, res) => {
@@ -74,6 +75,21 @@ app.post('/login', passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: true
 }))
+
+//Handles Logout
+app.get('/logout', (req, res) => {
+    req.logOut()
+    res.redirect('/login')
+})
+
+//Checks if user is authenticated before allowing access to the page
+function forwardAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    res.redirect('/login')
+}
 
 
 

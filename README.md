@@ -16,6 +16,6 @@ npm start
 ```
 Or, to run with Nodemon:
 ```bash
-npm start
+npm run dev
 ```
 
