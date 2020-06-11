@@ -11,7 +11,7 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 
-const initializePassport = require('./passport-config')
+const initializePassport = require('./config/passport-config.js')
 initializePassport(
     passport,
     email => users.find(user => user.email === email),
@@ -38,7 +38,7 @@ app.use(passport.session())
 
 //Sets view route for our index page
 app.get('/', (req, res) => {
-    res.render('index.ejs')
+    res.render('index.ejs', { name: req.user.name })
 });
 
 //Sets view route for our login page
@@ -53,7 +53,7 @@ app.get('/register', (req, res) => {
 
 
 //Handles register
-app.post('/register', checkNotAuthenticated, async(req, res) => {
+app.post('/register', async(req, res) => {
     try {
         const hash = await bcrypt.hash(req.body.password, 10)
         users.push({
